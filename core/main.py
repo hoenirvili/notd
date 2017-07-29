@@ -8,7 +8,8 @@ from display import Display
 def main():
     arguments = Arguments(argv)
     display_args = arguments.parse()
-    print(display_args)
+    if display_args == None:
+        return
     display = Display(display_args)
     display.run()
 

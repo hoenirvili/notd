@@ -45,6 +45,10 @@ class Arguments:
         options = vars(parser.parse_args(self._argv))
         try:
             self._valid_number(options['number'])
+            self._valid_leds(options['red'], options['green'])
+            data = self._valid_config(options['config'])
+            if data != None:
+                options['config'] = data
         except argparse.ArgumentError as e:
             print(e)
             return None 
@@ -63,5 +67,22 @@ class Arguments:
         if c == None:
             return
 
-        print(c)
-        
+        data = None
+        try:
+            data = json.load(c)
+        except json.JSONDecodeError as e:
+            raise argparse.ArgumentError(argument = None,
+                    message = "Empty or invalid file provided as gpio settings, please specify one or restore the default")
+
+        try:
+            c.close()
+        except ValueError as e:
+            raise argparse.ArgumentError(argument=None,
+                    message='Can\'t close the file')
+
+        return data
+
+    def _valid_leds(self, red, green):
+        if red == False and green == False:
+            raise argparse.ArgumentError(argument = None,
+                    message = 'Please pass the led to light up')
