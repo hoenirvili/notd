@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from args import Arguments
 from sys import argv
@@ -6,12 +6,14 @@ from display import Display
 
 
 def main():
-    arguments = Arguments(argv)
-    display_args = arguments.parse()
-    if display_args == None:
+    options = Arguments(argv).parse()
+    
+    if options == None:
+        # daemon = Daemon()
+        # daemon.start()
         return
-    display = Display(display_args)
-    display.run()
+
+    Display(options).run()
 
 if __name__ == "__main__":
     main()

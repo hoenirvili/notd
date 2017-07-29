@@ -2,7 +2,7 @@
     "gpio_conf": [
         {
             "led": "A",
-            "gpio": 7
+            "pin": 7
         },
 
         {

@@ -24,14 +24,19 @@ digits = {
 time = 0.001
 
 class Display:
-
     def __init__(self, arguments=None):
+        if arguments == None:
+            return
+
         self.number = arguments['number']
-        self.config = arguments['config']
+        self.gpio = arguments['config']['gpio_conf']
+        self.transistor = arguments['config']['transistor_conf']
+        self.led = arguments['config']['led_conf']
         self.green = arguments['green']
         self.red = arguments['red']
 
     def run(self):
+        self._setup_gpio()
         pass
 
     def _setup_gpio(self):
@@ -45,6 +50,14 @@ class Display:
         # to something other than the default (input), you get a 
         # warning when you try to configure a script. 
         GPIO.setwarnings(True)
+        for gpio in self.gpio:
+           GPIO.setup(gpio['pin'], GPIO.OUT, initial=GPIO.LOW)
+        
+        for base in self.transistors:
+            GPIO.setup(base['pin'], GPIO.OUT, initial=GPIO.LOW)
+
+        GPIO.setup(green['pin'], GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(red['pin'], GPIO.OUT, initial=GPIO.LOW)
 
     def _cealup_gpio(self):
         GPIO.cleanup()

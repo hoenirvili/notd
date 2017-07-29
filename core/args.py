@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import argparse
-import json
+import json 
 
 DESCRIPTION = 'Notify with a blinking LED and display a number for the 4 digit 7 segment led'
 PROG ='notd'
@@ -64,16 +64,17 @@ class Arguments:
                     message='Invalid number, only 4 digit number are supported')
 
     def _valid_config(self, c):
-        if c == None:
-            return
-
         data = None
+
+        if c == None:
+            return data
+
         try:
             data = json.load(c)
         except json.JSONDecodeError as e:
             raise argparse.ArgumentError(argument = None,
                     message = "Empty or invalid file provided as gpio settings, please specify one or restore the default")
-
+        
         try:
             c.close()
         except ValueError as e:
