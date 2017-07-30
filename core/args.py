@@ -3,16 +3,14 @@
 import argparse
 import json 
 
-DESCRIPTION = 'Notify with a blinking LED and display a number for the 4 digit 7 segment led'
-PROG ='notd'
+__DESCRIPTION = 'Notify with a blinking LED and display a number for the 4 digit 7 segment led'
+__PROG ='notd'
 
-errInvalidJson = argparse.ArgumentError(argument=None, message='Invalid json configuration')
 
-class Arguments:
+class Args:
     def __init__(self, argv=None):
         if argv == None:
-            raise argparse.ArgumentError(argument=None,
-                    message='Please provide a non empty command line argument list')
+            raise ValueError('Please provide a non empty command line argument list')
 
         self._argv = argv[1:]
 
@@ -23,7 +21,7 @@ class Arguments:
         return self._parse()
 
     def _parse(self):
-        parser = argparse.ArgumentParser(prog = PROG, description = DESCRIPTION)
+        parser = argparse.ArgumentParser(__PROG, __DESCRIPTION)
         group = parser.add_mutually_exclusive_group()
         parser.add_argument('-n',
                 type=int, 
@@ -82,6 +80,7 @@ class Arguments:
                     message='Can\'t close the file')
         
         if all(k in data for k in ("gpio", "transistor", "led")) == False:
-            raise errInvalidJson
+            raise argparse.ArgumentError(argument=None, 
+                    message='Invalid json configuration')
 
         return data

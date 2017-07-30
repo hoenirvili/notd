@@ -4,7 +4,7 @@ import signal
 import RPi.GPIO as GPIO
 from time import sleep
 
-digits = {
+__digits = {
     0: (1,1,1,1,1,1,0,0),
     1: (0,1,1,0,0,0,0,0),
     2: (1,1,0,1,1,0,1,0),
@@ -17,26 +17,29 @@ digits = {
     9: (1,1,1,1,0,1,1,0)
 }
 
-bases = {
+__bases = {
     0: (0, 0, 0, 1),
     1: (0, 0, 1, 0),
     2: (0, 1, 0, 0),
     3: (1, 0, 0, 0),
 }
 
-time = 0.001
-
 class Display:
     def __init__(self, arguments=None):
         if arguments == None:
-            return
+            raise ValueError("Invalid arguments passed")
 
-        self.number = arguments['number']
-        self.transistor = arguments['config']['transistor']
-        self.led = arguments['config']['led']
-        self.gpio = arguments['config']['gpio']
-        self.green = arguments['green']
-        self.red = arguments['red']
+        self._number = arguments['number']
+        self._transistor = arguments['config']['transistor']
+        self._led = arguments['config']['led']
+        self._gpio = arguments['config']['gpio']
+        self._green = arguments['green']
+        self._red = arguments['red']
+        self._on = True
+
+    def _handler(self, signum, frame):
+        self._on = False
+        
     def run(self):
         # Pin numbers on the P1 header of the Raspberry Pi board. 
         # The advantage of using this numbering system is that your 
@@ -51,42 +54,44 @@ class Display:
 
         # setup all pins to low
         for _, value in self.gpio.items():
-            GPIO.setup(value, GPIO.OUT, initial=GPIO.LOW)
+            GPIO.setup(value, GPIO.OUT, GPIO.LOW)
 
-        GPIO.setup(self.transistor, GPIO.OUT, initial=GPIO.LOW)
-        GPIO.setup((self.led["green"], self.led["red"]), GPIO.OUT, initial=GPIO.LOW)
+        GPIO.setup(self._transistor, GPIO.OUT, GPIO.LOW)
+        GPIO.setup((self._led["green"], self._led["red"]), GPIO.OUT, GPIO.LOW)
 
-        # extract every digit
+        # extract every digit and make a list out of them
         nums = list()
         a = self.number
         while a != 0:
              nums.append(a % 10)
              a = int(a / 10)
-        n = len(nums)
         
-        pins = (self.gpio["A"], 
-            self.gpio["B"], 
-            self.gpio["C"], 
-            self.gpio["D"], 
-            self.gpio["E"], 
-            self.gpio["F"], 
-            self.gpio["G"], 
-            self.gpio["DP"])
+        # extract all gpio 4 digit letter pins and
+        # make a tuple out of them to be feed up
+        # to the GPIO.output
+        pins = (self._gpio["A"], 
+            self._gpio["B"], 
+            self._gpio["C"], 
+            self._gpio["D"], 
+            self._gpio["E"], 
+            self._gpio["F"], 
+            self._gpio["G"], 
+            self._gpio["DP"])
 
         # choose what led to light up first
         name = "green"
         if self.red == True:
             name = "red"
-        GPIO.output(self.led[name], GPIO.HIGH)
-        sleep(1)
-        GPIO.output(self.led[name], GPIO.LOW)
+        GPIO.output(self._led[name], GPIO.HIGH)
+        sleep(.5)
+        GPIO.output(self._led[name], GPIO.LOW)
         
-        for k in range(1000): # TODO(hoenir) remove this 
-            # led the digits in order from left to right on the display
-            for i in range(n): # for every digit we have
-                GPIO.output(pins, digits[nums[i]]) # pins -> row combination
-                GPIO.output(self.transistor, bases[i]) # base pin transistors -> combination
-                sleep(.001) # sleep for 1 second
-
+        n = len(nums)
+        while self._on:
+            for i in range(n):
+                GPIO.output(pins, __digits[nums[i]])
+                GPIO.output(self._transistor, __bases[i])
+                sleep(.001)
+        
     def clean(self):
         GPIO.cleanup()

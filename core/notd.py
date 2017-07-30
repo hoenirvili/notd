@@ -1,21 +1,20 @@
 #!/usr/bin/python3
 
-from args import Arguments
-from sys import argv
-from display import Display
+import args
+import sys
+import display
 
 
 def main():
-    options = Arguments(argv).parse()
+    options = args.Args(argv).parse()
     if options == None:
-        # daemon = Daemon()
-        # daemon.start()
+        #TODO(hoenir) call the daemon
         return
 
-    display = Display(options)
-    print("[*] Running the display mode")
+    display = display.Display(options)
+    print("[*] Running the notification daemon in command line")
     display.run()
-    print("[*] Exit the display mode, clean up")
+    print("[*] Exit the process and clean up the pins")
     display.clean()
 
 if __name__ == "__main__":
