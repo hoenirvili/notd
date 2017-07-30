@@ -7,7 +7,6 @@ from display import Display
 
 def main():
     options = Arguments(argv).parse()
-
     if options == None:
         # daemon = Daemon()
         # daemon.start()

@@ -50,9 +50,7 @@ class Arguments:
 
         try:
             self._validate_number(options['number'])
-            self._valid_leds(options['red'], options['green'])
-            options['config'] = self._validate_config_decorate(options['config'])
-
+            options['config'] = self._validate_parse_config(options['config'])
         except argparse.ArgumentError as e:
             print(e)
             return None 
@@ -68,13 +66,10 @@ class Arguments:
             raise argparse.ArgumentError(argument=None,
                     message='Invalid number, only 4 digit numbers are supported')
 
-    def _validate_config_decorate(self, c):
-
+    def _validate_parse_config(self, c):
         if c == None:
             raise argparse.ArgumentError(argument=None,
                     message='Empty configuration passed')
-
-        data = None
         try:
             data = json.load(c)
         except json.JSONDecodeError as e:
@@ -86,42 +81,7 @@ class Arguments:
             raise argparse.ArgumentError(argument=None,
                     message='Can\'t close the file')
         
-        if all(k in data for k in ("gpio_conf", "transistor_conf", "led_conf")) == False:
+        if all(k in data for k in ("gpio", "transistor", "led")) == False:
             raise errInvalidJson
-            
-        anodes = 8
-        n = 0
-        for gpio in data['gpio_conf']:
-            n = n+1 
-            if gpio['led'] == '' or gpio['pin'] == 0:
-                raise errInvalidJson
-
-        if n != anodes:
-            raise errInvalidJson
-
-        bases = 4
-        n = 0
-        for base in data['transistor_conf']:
-            n = n+1
-            if base['digit'] == '' or base['pin'] == 0:
-                raise errInvalidJson
-
-        if n != bases:
-            raise errInvalidJson
-
-        leds = 2
-        n = 0
-        for led in data['led_conf']:
-            n = n+1
-            if led['led'] != 'red' and  led['led'] != 'green' or led['pin'] == 0:
-                raise errInvalidJson
-
-        if n != leds:
-            raise errInvalidJson 
-
 
         return data
-
-    def _valid_leds(self, red, green):
-        if red == False and green == False:
-            raise errInvalidJson

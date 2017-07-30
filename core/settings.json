@@ -1,70 +1,17 @@
 {
-    "gpio_conf": [
-        {
-            "led": "A",
-            "pin": 7
-        },
-
-        {
-            "led": "B",
-            "pin": 11
-        },
-
-        {
-            "led": "C",
-            "pin": 12
-        },
-        {
-            "led": "D",
-            "pin": 13
-        },
-        {
-            "led": "E",
-            "pin": 15
-        },
-
-        {
-            "led": "F",
-            "pin": 16
-        },
-
-        {
-            "led": "G",
-            "pin": 18
-        },
-        {
-            "led": "DP",
-            "pin": 22
-        }
-    ],
-
-    "transistor_conf": [ 
-        {
-            "digit": 1,
-            "pin": 31
-        },
-        {
-            "digit": 2,
-            "pin": 33
-        },
-        {
-            "digit": 1,
-            "pin": 35 
-        },
-        {
-            "digit": 1,
-            "pin": 37
-        }
-    ],
-
-    "led_conf" :[
-        {
-            "led": "red",
-            "pin": 38
-        },
-        {
-            "led": "green",
-            "pin": 40
-        }
-    ]
+    "gpio": {
+            "A": 7,
+            "B": 11,
+            "C": 12,
+            "D": 13,
+            "E": 15,
+            "F": 16,
+            "G": 18,
+            "DP": 22
+    },
+    "transistor": [31, 33, 35, 37],
+    "led" : {
+        "red": 38,
+        "green": 40
+    }
 }
