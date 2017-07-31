@@ -4,7 +4,7 @@ import signal
 import RPi.GPIO as GPIO
 from time import sleep
 
-__digits = {
+digits = {
     0: (1,1,1,1,1,1,0,0),
     1: (0,1,1,0,0,0,0,0),
     2: (1,1,0,1,1,0,1,0),
@@ -17,7 +17,7 @@ __digits = {
     9: (1,1,1,1,0,1,1,0)
 }
 
-__bases = {
+bases = {
     0: (0, 0, 0, 1),
     1: (0, 0, 1, 0),
     2: (0, 1, 0, 0),
@@ -41,6 +41,8 @@ class Display:
         self._on = False
         
     def run(self):
+        signal.signal(signal.SIGINT, self._handler)
+
         # Pin numbers on the P1 header of the Raspberry Pi board. 
         # The advantage of using this numbering system is that your 
         # hardware will always work, regardless of the board revision of the RPi.
@@ -52,16 +54,17 @@ class Display:
         # warning when you try to configure a script. 
         GPIO.setwarnings(False)
 
-        # setup all pins to low
-        for _, value in self.gpio.items():
-            GPIO.setup(value, GPIO.OUT, GPIO.LOW)
-
-        GPIO.setup(self._transistor, GPIO.OUT, GPIO.LOW)
-        GPIO.setup((self._led["green"], self._led["red"]), GPIO.OUT, GPIO.LOW)
+        # set all gpio anode pins to low
+        for _, value in self._gpio.items():
+            GPIO.setup(value, GPIO.OUT, initial=GPIO.LOW)
+        # set all base transistor pins to low
+        GPIO.setup(self._transistor, GPIO.OUT, initial=GPIO.LOW)
+        # set all anode pin leds to low
+        GPIO.setup((self._led["green"], self._led["red"]), GPIO.OUT, initial=GPIO.LOW)
 
         # extract every digit and make a list out of them
         nums = list()
-        a = self.number
+        a = self._number
         while a != 0:
              nums.append(a % 10)
              a = int(a / 10)
@@ -80,17 +83,17 @@ class Display:
 
         # choose what led to light up first
         name = "green"
-        if self.red == True:
+        if self._red == True:
             name = "red"
         GPIO.output(self._led[name], GPIO.HIGH)
-        sleep(.5)
+        sleep(1)
         GPIO.output(self._led[name], GPIO.LOW)
         
         n = len(nums)
         while self._on:
             for i in range(n):
-                GPIO.output(pins, __digits[nums[i]])
-                GPIO.output(self._transistor, __bases[i])
+                GPIO.output(pins, digits[nums[i]])
+                GPIO.output(self._transistor, bases[i])
                 sleep(.001)
         
     def clean(self):

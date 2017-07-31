@@ -6,16 +6,16 @@ import display
 
 
 def main():
-    options = args.Args(argv).parse()
+    options = args.Args(sys.argv).parse()
     if options == None:
         #TODO(hoenir) call the daemon
         return
 
-    display = display.Display(options)
+    d = display.Display(options)
     print("[*] Running the notification daemon in command line")
-    display.run()
-    print("[*] Exit the process and clean up the pins")
-    display.clean()
+    d.run()
+    print("\n[*] Exit the process and clean up the pins")
+    d.clean()
 
 if __name__ == "__main__":
     main()

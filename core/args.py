@@ -3,14 +3,17 @@
 import argparse
 import json 
 
-__DESCRIPTION = 'Notify with a blinking LED and display a number for the 4 digit 7 segment led'
-__PROG ='notd'
 
 
 class Args:
+
     def __init__(self, argv=None):
         if argv == None:
             raise ValueError('Please provide a non empty command line argument list')
+
+        global __PROG, __DESCRIPTION 
+        __PROG ='notd'
+        __DESCRIPTION = 'Notify with a blinking LED and display a number for the 4 digit 7 segment led'
 
         self._argv = argv[1:]
 
