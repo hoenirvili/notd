@@ -64,10 +64,13 @@ class Display:
 
         # extract every digit and make a list out of them
         nums = list()
-        a = self._number
-        while a != 0:
-             nums.append(a % 10)
-             a = int(a / 10)
+        if self._number == 0:
+            nums.append(self._number)
+        else:
+            a = self._number
+            while a != 0:
+                nums.append(a % 10)
+                a = int(a / 10)
         
         # extract all gpio 4 digit letter pins and
         # make a tuple out of them to be feed up
