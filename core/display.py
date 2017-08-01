@@ -41,6 +41,9 @@ class Display:
         self._on = False
         
     def run(self):
+        print("[*] Using the pi library RPi.GPIO version {}".format(GPIO.VERSION))
+        print("[*] Using the raspberry {}".format(GPIO.RPI_INFO['TYPE']))
+
         signal.signal(signal.SIGINT, self._handler)
 
         # Pin numbers on the P1 header of the Raspberry Pi board. 
