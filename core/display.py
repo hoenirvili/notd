@@ -84,7 +84,7 @@ class Display:
             self._gpio["D"], 
             self._gpio["E"], 
             self._gpio["F"], 
-            self._gpio["G"], 
+            self._gpio["G"],
             self._gpio["DP"])
 
         # choose what led to light up first
@@ -94,13 +94,50 @@ class Display:
         GPIO.output(self._led[name], GPIO.HIGH)
         sleep(1)
         GPIO.output(self._led[name], GPIO.LOW)
-        
+
         n = len(nums)
-        while self._on:
-            for i in range(n):
-                GPIO.output(pins, digits[nums[i]])
-                GPIO.output(self._transistor, bases[i])
-                sleep(.001)
+
+        # init all GPIO pins to pwm
+        # pwms = []
+        # for pin in pins:
+        #     p = GPIO.PWM(pin, 100)
+        #     p.start(50)
+        #     pwms.append(p)
+        #
+        pwms_trans = []
+        k, i = 25, 1
+        for t in self._transistor:
+            t = GPIO.PWM(t, 100)
+            t.start(i * k)
+            i = i+1
+            pwms_trans.append(t)
         
+        GPIO.output(pins[0], 1)
+        while self._on:
+            sleep(1)
+            # for i in range(n):
+                # self._displayNumber(pwms, digits[nums[i]])
+                # GPIO.output(self._transistor, bases[i])
+        
+
+        # stop all transistors
+        for t in pwms_trans:
+            t.stop()
+
+        # stop all pwms
+        # for pwm in pwms:
+        #     pwm.stop()
+        #
+        
+
+    def _displayNumber(self, pwms, options):
+        n = len(pwms)
+        for i in range(n):
+            if options[i] == 1:
+                pwms[i].ChangeDutyCycle(99) # 99% time on, 1 % off
+            elif options[i] == 0:
+                pwms[i].ChangeDutyCycle(0) # 100% off
+
+
     def clean(self):
         GPIO.cleanup()
