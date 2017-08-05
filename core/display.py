@@ -65,16 +65,9 @@ class Display:
         # set all anode pin leds to low
         GPIO.setup((self._led["green"], self._led["red"]), GPIO.OUT, initial=GPIO.LOW)
 
-        # extract every digit and make a list out of them
-        nums = list()
-        if self._number == 0:
-            nums.append(self._number)
-        else:
-            a = self._number
-            while a != 0:
-                nums.append(a % 10)
-                a = int(a / 10)
-        
+        # extract every digit and make a list out of them in the reverse order
+        nums = list(map(int, "%02d" % self._number))[::-1]
+
         # extract all gpio 4 digit letter pins and
         # make a tuple out of them to be feed up
         # to the GPIO.output
@@ -96,7 +89,6 @@ class Display:
         GPIO.output(self._led[name], GPIO.LOW)
 
         n = len(nums)
-
         # init all GPIO pins to pwm
         # pwms = []
         # for pin in pins:
@@ -104,8 +96,10 @@ class Display:
         #     p.start(50)
         #     pwms.append(p)
         #
+
         pwms_trans = []
         k, i = 25, 1
+
         for t in self._transistor:
             t = GPIO.PWM(t, 100)
             t.start(i * k)
@@ -116,9 +110,8 @@ class Display:
         while self._on:
             sleep(1)
             # for i in range(n):
-                # self._displayNumber(pwms, digits[nums[i]])
-                # GPIO.output(self._transistor, bases[i])
-        
+            #     self._displayNumber(pwms, digits[nums[i]])
+            #     GPIO.output(self._transistor, bases[i])
 
         # stop all transistors
         for t in pwms_trans:
