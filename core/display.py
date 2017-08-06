@@ -37,14 +37,12 @@ class Display:
         self._red = arguments['red']
         self._on = True
 
-    def _handler(self, signum, frame):
+    def stop(self):
         self._on = False
         
     def run(self):
         print("[*] Using the pi library RPi.GPIO version {}".format(GPIO.VERSION))
         print("[*] Using the raspberry {}".format(GPIO.RPI_INFO['TYPE']))
-
-        signal.signal(signal.SIGINT, self._handler)
 
         # Pin numbers on the P1 header of the Raspberry Pi board. 
         # The advantage of using this numbering system is that your 
@@ -89,48 +87,12 @@ class Display:
         GPIO.output(self._led[name], GPIO.LOW)
 
         n = len(nums)
-        # init all GPIO pins to pwm
-        # pwms = []
-        # for pin in pins:
-        #     p = GPIO.PWM(pin, 100)
-        #     p.start(50)
-        #     pwms.append(p)
-        #
-
-        pwms_trans = []
-        k, i = 25, 1
-
-        for t in self._transistor:
-            t = GPIO.PWM(t, 100)
-            t.start(i * k)
-            i = i+1
-            pwms_trans.append(t)
-        
-        GPIO.output(pins[0], 1)
         while self._on:
-            sleep(1)
-            # for i in range(n):
-            #     self._displayNumber(pwms, digits[nums[i]])
-            #     GPIO.output(self._transistor, bases[i])
-
-        # stop all transistors
-        for t in pwms_trans:
-            t.stop()
-
-        # stop all pwms
-        # for pwm in pwms:
-        #     pwm.stop()
-        #
-        
-
-    def _displayNumber(self, pwms, options):
-        n = len(pwms)
-        for i in range(n):
-            if options[i] == 1:
-                pwms[i].ChangeDutyCycle(99) # 99% time on, 1 % off
-            elif options[i] == 0:
-                pwms[i].ChangeDutyCycle(0) # 100% off
-
+            for i in range(n):
+                GPIO.output(pins, digits[nums[i]])
+                GPIO.output(self._transistor, bases[i])
+                sleep(0.001)
+       
 
     def clean(self):
         GPIO.cleanup()

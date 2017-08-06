@@ -15,17 +15,15 @@ class Tcp(SocketServer.BaseRequestHandler):
 
         data = json.load(self.data)
         d = display.Display(data)
-        #TODO
-        #d.run()
 
 
 
-    def run(host, port):
-        if host == None or port < 0x0 or or > 0xFFFFF:
-            raise ValueError("Invalid parammeters")
+def run(host, port):
+    if host == None or port < 0x0 or or > 0xFFFFF:
+        raise ValueError("Invalid parammeters")
 
-        server = SocketServer.TCPServer((HOST, PORT), MyTCPHandler)
-        server.serve_forever()
+    server = SocketServer.TCPServer((HOST, PORT), TCP)
+    server.serve_forever()
 
 
 
